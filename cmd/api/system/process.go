@@ -2,56 +2,39 @@ package system
 
 import (
 	"context"
-	"encoding/csv"
-	"os"
-	"strconv"
-	"time"
+	"path/filepath"
+	"runtime"
 )
 
-type (
-	ReadCSV func(ctx context.Context, filename string) ([]Transaction, error)
+const (
+	folder string = "data"
+	file   string = "data.csv"
 )
 
-func MakeReadCSV() ReadCSV {
-	return func(ctx context.Context, filename string) ([]Transaction, error) {
-		file, err := os.Open(filename)
+type ProcessTransactions func(ctx context.Context) (Email, error)
+
+func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
+	return func(ctx context.Context) (Email, error) {
+		var email Email
+
+		transactions, err := readCSV(ctx, GetFileName())
 		if err != nil {
-			return nil, err
-		}
-		defer file.Close()
-
-		reader := csv.NewReader(file)
-		records, err := reader.ReadAll()
-		if err != nil {
-			return nil, err
+			return Email{}, ErrCantGetCsvFile
 		}
 
-		var transactions []Transaction
-		for i, record := range records {
-			if i == 0 {
-				continue
-			}
+		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
+		monthCount := transactionsPerMonth(transactions)
 
-			id, _ := strconv.ParseInt(record[0], 10, 64)
-			date, _ := time.Parse("2/1", record[1])
-			currentYear := time.Now().Year()
-			date = time.Date(currentYear, date.Month(), date.Day(), 0, 0, 0, 0, time.UTC)
-			amount, _ := strconv.ParseFloat(record[2], 64)
+		email.Body = getEmailBody(email.Balance, email.AverageDebit, email.AverageCredit, monthCount)
 
-			transaction := Transaction{
-				ID:          int64(id),
-				Date:        date,
-				Transaction: float64(amount),
-			}
-
-			transaction.Type = "credit"
-			if amount < 0 {
-				transaction.Type = "debit"
-			}
-
-			transactions = append(transactions, transaction)
-		}
-
-		return transactions, nil
+		return email, nil
 	}
+}
+
+func GetFileName() string {
+	// Get the current file's directory
+	_, filename, _, _ := runtime.Caller(0)
+	testDir := filepath.Dir(filename)
+	// Construct the absolute file path to the CSV file
+	return filepath.Join(testDir, folder, file)
 }

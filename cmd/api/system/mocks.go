@@ -12,6 +12,13 @@ func MockReadCSV(trans []Transaction, err error) ReadCSV {
 	}
 }
 
+// MockProcessTransactions mock
+func MockProcessTransactions(email Email, err error) ProcessTransactions {
+	return func(context.Context) (Email, error) {
+		return email, err
+	}
+}
+
 // MockTransaction mock
 func MockTransaction(id int64, date time.Time, trType string, amount float64) Transaction {
 	return Transaction{
@@ -41,10 +48,32 @@ func MockTransactions() []Transaction {
 		MockTransaction(13, time.Date(2023, 1, 14, 0, 0, 0, 0, time.UTC), "debit", -13.4),
 		MockTransaction(14, time.Date(2023, 1, 15, 0, 0, 0, 0, time.UTC), "debit", -23.46),
 		MockTransaction(15, time.Date(2023, 1, 16, 0, 0, 0, 0, time.UTC), "credit", +13),
-		MockTransaction(16, time.Date(2023, 1, 17, 0, 0, 0, 0, time.UTC), "credit", +64.5),
-		MockTransaction(17, time.Date(2023, 1, 18, 0, 0, 0, 0, time.UTC), "debit", -14.5),
-		MockTransaction(18, time.Date(2023, 1, 19, 0, 0, 0, 0, time.UTC), "debit", -23.46),
-		MockTransaction(19, time.Date(2023, 1, 20, 0, 0, 0, 0, time.UTC), "credit", +14),
-		MockTransaction(20, time.Date(2023, 1, 21, 0, 0, 0, 0, time.UTC), "credit", +65.5),
+		MockTransaction(16, time.Date(2023, 2, 17, 0, 0, 0, 0, time.UTC), "credit", +64.5),
+		MockTransaction(17, time.Date(2023, 2, 18, 0, 0, 0, 0, time.UTC), "debit", -14.5),
+		MockTransaction(18, time.Date(2023, 2, 19, 0, 0, 0, 0, time.UTC), "debit", -23.46),
+		MockTransaction(19, time.Date(2023, 2, 20, 0, 0, 0, 0, time.UTC), "credit", +14),
+		MockTransaction(20, time.Date(2023, 2, 21, 0, 0, 0, 0, time.UTC), "credit", +65.5),
+	}
+}
+
+// MockEmail mock
+func MockEmail() Email {
+	monthCount := MockMonthsMap()
+	email := Email{
+		Balance:       264.69999999999993,
+		AverageDebit:  -86.65000000000002,
+		AverageCredit: 219,
+	}
+
+	email.Body = getEmailBody(email.Balance, email.AverageDebit, email.AverageCredit, monthCount)
+
+	return email
+}
+
+// MockMonthsMap mock
+func MockMonthsMap() map[time.Month]int {
+	return map[time.Month]int{
+		time.January:  16,
+		time.February: 5,
 	}
 }
