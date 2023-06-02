@@ -21,6 +21,10 @@ type (
 	}
 )
 
+func (e Email) toDTO() EmailDTO {
+	return EmailDTO(e)
+}
+
 func getBalanceInfo(transactions []Transaction) (float64, float64, float64) {
 	var total, debit, credit float64
 	for _, t := range transactions {
@@ -49,25 +53,15 @@ func transactionsPerMonth(transactions []Transaction) map[time.Month]int {
 }
 
 func getEmailBody(balance float64, avgDebit float64, avgCredit float64, workingMonths map[time.Month]int) string {
-	return fmt.Sprintf(`Hello,
-
-	Here is your accounts information.
-
-	Total Balance is: $ %v ,
-	Average Debit amount is: $ %v ,
-	Average Credit amount is: $ %v ,
-	%s
-
-	Thanks,
-	Your Bank
-	`, balance, avgDebit, avgCredit, getTransactionsPerMonth(workingMonths))
+	return fmt.Sprintf(`Hello, Here is your accounts information. Total Balance is: $ %v, Average Debit amount is: $ %v, Average Credit amount is: $ %v, %s. Thanks, Your Bank`,
+		balance, avgDebit, avgCredit, getTransactionsPerMonth(workingMonths))
 }
 
 func getTransactionsPerMonth(workingMonths map[time.Month]int) string {
 	var res string
 
 	for month, count := range workingMonths {
-		res += fmt.Sprintf("Number of transactions in %s: %d\n", month.String(), count)
+		res += fmt.Sprintf(" Number of transactions in %s: %d, ", month.String(), count)
 	}
 
 	return res

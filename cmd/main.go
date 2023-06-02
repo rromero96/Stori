@@ -4,7 +4,13 @@ import (
 	"log"
 	"net"
 
+	"github.com/rromero96/stori/cmd/api/system"
 	"github.com/rromero96/stori/internal/web"
+)
+
+const (
+	systemGetInfo string = "/system/info/v1"
+	systemGetHtml string = "/system/html/v1"
 )
 
 func main() {
@@ -24,5 +30,18 @@ func run() error {
 		log.Fatal(err)
 	}
 
+	/*
+		Injections
+	*/
+	readCSV := system.MakeReadCSV()
+	processTransactions := system.MakeProcessTransactions(readCSV)
+
+	/*
+		Endpoints
+	*/
+	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
+	app.Get(systemGetHtml, system.GetHTMLInfoV1())
+
+	log.Print("server up and running in port 8080")
 	return web.Run(ln, web.DefaultTimeouts, app)
 }
