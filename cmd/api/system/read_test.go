@@ -10,7 +10,7 @@ import (
 )
 
 func TestReadCSV_success(t *testing.T) {
-	filename := system.GetFileName()
+	filename := system.GetFileName("data", "data.csv")
 
 	readFiles := system.MakeReadCSV()
 	ctx := context.Background()
