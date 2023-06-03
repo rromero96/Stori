@@ -3,11 +3,13 @@ package system
 import "errors"
 
 var (
-	ErrOpeningCsv     = errors.New("error opening csv")
-	ErrReadingCsv     = errors.New("error reading csv")
-	ErrCantGetCsvFile = errors.New("can't get csv file")
+	ErrOpeningCsv             = errors.New("error opening csv")
+	ErrReadingCsv             = errors.New("error reading csv")
+	ErrCantGetCsvFile         = errors.New("can't get csv file")
+	ErrCantGetTransactionInfo = errors.New("can't get transaction info")
 )
 
 const (
-	CantGetInfo string = "can't get info"
+	CantGetInfo   string = "can't get info"
+	CantWriteHtml string = "can't write html"
 )
