@@ -37,35 +37,31 @@ func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLPr
 		templateFile := GetFileName(htmlFolder, templateFile)
 		outputFile := GetFileName(htmlFolder, htmlFile)
 
-		// Read the template file
 		tmplBytes, err := ioutil.ReadFile(templateFile)
 		if err != nil {
-			return []byte{}, err
+			return []byte{}, ErrReadTemplateFile
 		}
 
-		// Parse the template
-		template, err := template.New("accountInfo").Parse(string(tmplBytes))
+		templateName := "accountInfo"
+		template, err := template.New(templateName).Parse(string(tmplBytes))
 		if err != nil {
-			return []byte{}, err
+			return []byte{}, ErrTemplateParse
 		}
 
-		// Create the output file
 		output, err := os.Create(outputFile)
 		if err != nil {
-			return []byte{}, err
+			return []byte{}, ErrCreateOutputFile
 		}
 		defer output.Close()
 
-		// Execute the template and write the output to the file
 		err = template.Execute(output, email)
 		if err != nil {
-			return []byte{}, err
+			return []byte{}, ErrTemplateExecute
 		}
 
-		// Read the generated HTML file
 		htmlBytes, err := ioutil.ReadFile(outputFile)
 		if err != nil {
-			return []byte{}, err
+			return []byte{}, ErrReadFile
 		}
 
 		return htmlBytes, nil
@@ -91,9 +87,8 @@ func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
 
 // GetFileName returns the absolute file path of a file
 func GetFileName(folder string, file string) string {
-	// Get the current file's directory
 	_, filename, _, _ := runtime.Caller(0)
 	testDir := filepath.Dir(filename)
-	// Construct the absolute file path of a file
+
 	return filepath.Join(testDir, folder, file)
 }
