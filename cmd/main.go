@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"os"
 
 	"github.com/rromero96/roro-lib/cmd/web"
 	"github.com/rromero96/stori/cmd/api/system"
@@ -26,7 +27,13 @@ func run() error {
 	*/
 	app := web.New()
 
-	ln, err := net.Listen("tcp", "0.0.0.0:8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	address := ":" + port
+	ln, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,6 +52,6 @@ func run() error {
 	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
 	app.Get(storyLogo, system.GetLogoV1())
 
-	log.Print("server up and running in port 8080")
+	log.Printf("server up and running in port %s", port)
 	return web.Run(ln, web.DefaultTimeouts, app)
 }
