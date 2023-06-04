@@ -9,6 +9,7 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rromero96/roro-lib/cmd/config"
 	"github.com/rromero96/roro-lib/cmd/web"
 
 	"github.com/rromero96/stori/cmd/api/system"
@@ -20,10 +21,10 @@ const (
 	storyLogo     string = "/static/stori_logo.jpeg"
 
 	//this when its on docker
-	//connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
-	connectionStringFormat string = "%s:%s@tcp/%s?charset=utf8&parseTime=true"
-	mysqlDriver            string = "mysql"
-	storiDB                string = "stori"
+	connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
+	//connectionStringFormat string = "%s:%s@tcp/%s?charset=utf8&parseTime=true"
+	mysqlDriver string = "mysql"
+	storiDB     string = "stori"
 )
 
 func main() {
@@ -90,12 +91,13 @@ func createDBClient(connectionString string) (*sql.DB, error) {
 }
 
 func getDBConnectionStringRoutes(database string) string {
-	/* 	dbUsername := config.String("databases", fmt.Sprintf("mysql.%s.username", database), "")
-	   	dbPassword := config.String("databases", fmt.Sprintf("mysql.%s.password", database), "")
-	   	// TODO: check if host info can be uploaded from a secret
-	   	//dbHost := secret.FromEnv(config.String("databases", fmt.Sprintf("mysql.%s.host", database), ""))
-	   	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
-	   	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
-	   	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName) */
-	return fmt.Sprintf(connectionStringFormat, "root", "", "stori")
+	dbUsername := config.String("databases", fmt.Sprintf("mysql.%s.username", database), "")
+	dbPassword := config.String("databases", fmt.Sprintf("mysql.%s.password", database), "")
+	// TODO: check if host info can be uploaded from a secret
+	//dbHost := secret.FromEnv(config.String("databases", fmt.Sprintf("mysql.%s.host", database), ""))
+	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
+	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
+	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName)
+
+	//return fmt.Sprintf(connectionStringFormat, "root", "", "stori")
 }

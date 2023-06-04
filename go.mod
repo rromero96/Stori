@@ -10,6 +10,8 @@ require (
 require (
 	github.com/go-chi/chi/v5 v5.0.8 // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
+	github.com/olebedev/config v0.0.0-20220822221314-86fa169f9f99 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 require (
