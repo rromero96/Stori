@@ -26,7 +26,7 @@ func run() error {
 	*/
 	app := web.New()
 
-	ln, err := net.Listen("tcp", ":8080")
+	ln, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		log.Fatal(err)
 	}

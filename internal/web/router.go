@@ -1,4 +1,4 @@
-package web
+/* package web
 
 import (
 	"context"
@@ -332,3 +332,4 @@ func (g *RouteGroup) Delete(pattern string, handler Handler, mw ...Middleware) {
 func (g *RouteGroup) Trace(pattern string, handler Handler, mw ...Middleware) {
 	g.Method(http.MethodTrace, pattern, handler, mw...)
 }
+*/
