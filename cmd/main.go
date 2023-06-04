@@ -97,5 +97,5 @@ func getDBConnectionStringRoutes(database string) string {
 	   	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
 	   	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
 	   	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName) */
-	return fmt.Sprintf(connectionStringFormat, "root", "", "stori-app")
+	return fmt.Sprintf(connectionStringFormat, "root", "", "stori")
 }
