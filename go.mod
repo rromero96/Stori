@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/DataDog/datadog-go/v5 v5.2.0 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -21,6 +22,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/newrelic/go-agent/v3 v3.20.3 // indirect
+	github.com/olebedev/config v0.0.0-20220822221314-86fa169f9f99 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rromero96/roro-lib v0.1.4 // indirect
 	go.opentelemetry.io/contrib v1.8.0 // indirect
@@ -38,5 +40,6 @@ require (
 	google.golang.org/genproto v0.0.0-20221010155953-15ba04fc1c0e // indirect
 	google.golang.org/grpc v1.50.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

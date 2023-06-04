@@ -5,6 +5,7 @@ WORKDIR /go/src
 COPY go.mod .
 COPY go.sum .
 ARG GITHUB_TOKEN
+ENV CONF_DIR=/app/conf
 ENV GOPRIVATE=github.com/rromero96/*
 RUN go env -w GOPRIVATE=github.com/rromero96/*
 RUN git config --global url."https://github.com/".insteadOf git://github.com/
