@@ -3,5 +3,5 @@ databases:
     stori:
      username: "root"
      password: ""
-     db_name: "stori-app"
+     db_name: "stori"
      db_host: "161.22.22.183:3306"

@@ -17,7 +17,7 @@ RUN GIT_TERMINAL_PROMPT=1 go mod download -x
 FROM builder AS final
 
 COPY . .
-RUN go build -o app cmd/main.go
+RUN go build -o app cmd/api/main.go
 
 # Set the entrypoint to run the application
 ENTRYPOINT ["./app"]
