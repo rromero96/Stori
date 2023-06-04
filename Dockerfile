@@ -1,15 +1,23 @@
-FROM golang:latest AS builder
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+# Stage 1: Download dependencies
+FROM golang:1.19 AS builder
+
 WORKDIR /go/src
 COPY go.mod .
-RUN go mod download
-COPY . .
-RUN go build cmd/main.go
+COPY go.sum .
+ARG GITHUB_TOKEN
+ENV GOPRIVATE=github.com/rromero96/*
+RUN go env -w GOPRIVATE=github.com/rromero96/*
+RUN git config --global url."https://github.com/".insteadOf git://github.com/
+RUN git config --global credential.helper 'store --file ~/.git-credentials'
+RUN echo "https://github.com:${GITHUB_TOKEN}@github.com" >> ~/.git-credentials
+RUN GIT_TERMINAL_PROMPT=1 go mod download -x
 
-FROM golang:latest
-COPY --from=builder /go/src .
-EXPOSE 8080
-ENTRYPOINT ["./main"]
+# Stage 2: Build the application
+FROM builder AS final
+
+COPY . .
+RUN go build -o app cmd/main.go
+
+# Set the entrypoint to run the application
+ENTRYPOINT ["./app"]
+

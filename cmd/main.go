@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/rromero96/roro-lib/cmd/web"
 	"github.com/rromero96/stori/cmd/api/system"
-	"github.com/rromero96/stori/internal/web"
 )
 
 const (
