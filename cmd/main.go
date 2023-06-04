@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
+	"github.com/rromero96/roro-lib/cmd/web"
 	"github.com/rromero96/stori/cmd/api/system"
-	"github.com/rromero96/stori/internal/web"
 )
 
 const (
@@ -26,7 +26,7 @@ func run() error {
 	*/
 	app := web.New()
 
-	ln, err := net.Listen("tcp", ":8080")
+	ln, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		log.Fatal(err)
 	}
