@@ -12,7 +12,7 @@ import (
 type ReadCSV func(ctx context.Context, filename string) ([]Transaction, error)
 
 // MakeReadCSV creates a ReadCSV function
-func MakeReadCSV() ReadCSV {
+func MakeReadCSV(mySQLCreate MySQLCreate) ReadCSV {
 	return func(ctx context.Context, filename string) ([]Transaction, error) {
 		file, err := os.Open(filename)
 		if err != nil {
@@ -50,6 +50,11 @@ func MakeReadCSV() ReadCSV {
 			}
 
 			transactions = append(transactions, transaction)
+		}
+
+		err = mySQLCreate(ctx, transactions)
+		if err != nil {
+			return []Transaction{}, ErrCantCreateTransactions
 		}
 
 		return transactions, nil

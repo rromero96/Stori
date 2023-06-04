@@ -8,7 +8,9 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/rromero96/roro-lib/cmd/web"
+
 	"github.com/rromero96/stori/cmd/api/system"
 )
 
@@ -19,7 +21,7 @@ const (
 
 	//this when its on docker
 	//connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
-	connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
+	connectionStringFormat string = "%s:%s@tcp/%s?charset=utf8&parseTime=true"
 	mysqlDriver            string = "mysql"
 	storiDB                string = "stori"
 )
@@ -48,9 +50,18 @@ func run() error {
 	}
 
 	/*
+	   MYSQL client
+	*/
+	storiDBClient, err := createDBClient(getDBConnectionStringRoutes(storiDB))
+	if err != nil {
+		return err
+	}
+
+	/*
 		Injections
 	*/
-	readCSV := system.MakeReadCSV()
+	mysqlCreateTransactions := system.MakeMySQLCreate(storiDBClient)
+	readCSV := system.MakeReadCSV(mysqlCreateTransactions)
 	processTransactions := system.MakeProcessTransactions(readCSV)
 	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)
 
@@ -86,6 +97,5 @@ func getDBConnectionStringRoutes(database string) string {
 	   	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
 	   	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
 	   	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName) */
-
 	return fmt.Sprintf(connectionStringFormat, "root", "", "stori-app")
 }

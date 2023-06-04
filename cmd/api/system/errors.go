@@ -15,6 +15,7 @@ var (
 	ErrCantPrepareStatement   = errors.New("can't prepare statement")
 	ErrCantRunQuery           = errors.New("can't run query")
 	ErrCantGetLastID          = errors.New("can't get last id")
+	ErrCantCreateTransactions = errors.New("can't create transactions")
 )
 
 const (

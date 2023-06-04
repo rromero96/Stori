@@ -26,6 +26,13 @@ func MockHTMLProcessTransactions(html []byte, err error) HTMLProcessTransactions
 	}
 }
 
+// MockMySQLCreate mock
+func MockMySQLCreate(err error) MySQLCreate {
+	return func(context.Context, []Transaction) error {
+		return err
+	}
+}
+
 // MockTransaction mock
 func MockTransaction(id int64, date time.Time, trType string, amount float64) Transaction {
 	return Transaction{
