@@ -61,3 +61,14 @@ func TestHTTPHandler_GetHTMLInfoV1_fails(t *testing.T) {
 
 	assert.Equal(t, got, want)
 }
+
+func TestHTTPHandler_GetLogoV1_success(t *testing.T) {
+	getLogoV1 := system.GetLogoV1()
+
+	ctx, w := context.Background(), httptest.NewRecorder()
+	r, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/test", strings.NewReader(""))
+
+	got := getLogoV1(w, r)
+
+	assert.Nil(t, got)
+}

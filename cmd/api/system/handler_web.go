@@ -22,7 +22,6 @@ func GetInfoV1(processTransactions ProcessTransactions) web.Handler {
 func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) web.Handler {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		w.Header().Set("Content-Type", "text/html")
-		http.ServeFile(w, r, GetFileName(htmlFolder, storiLogo))
 
 		html, err := htmlProcessTransactions(r.Context())
 		if err != nil {
@@ -36,5 +35,13 @@ func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) web.Handler 
 		}
 
 		return web.EncodeJSON(w, nil, http.StatusOK)
+	}
+}
+
+// GetLogoV1 show the logo of Stori
+func GetLogoV1() web.Handler {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		http.ServeFile(w, r, GetFileName(htmlFolder, storiLogo))
+		return nil
 	}
 }
