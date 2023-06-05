@@ -20,6 +20,8 @@ FROM builder AS final
 COPY . .
 RUN go build -o app cmd/api/main.go
 
+EXPOSE 8080
+
 # Set the entrypoint to run the application
 ENTRYPOINT ["./app"]
 

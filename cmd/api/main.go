@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -39,11 +38,7 @@ func run() error {
 	*/
 	app := web.New()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
+	port := "8080"
 	address := ":" + port
 	ln, err := net.Listen("tcp", address)
 	if err != nil {
