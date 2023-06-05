@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	folder       string = "data"
+	path         string = "api/system/data"
 	file         string = "data.csv"
 	htmlFolder   string = "html"
 	htmlFile     string = "account_info.html"
@@ -73,9 +73,9 @@ func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
 	return func(ctx context.Context) (Email, error) {
 		var email Email
 
-		transactions, err := readCSV(ctx, GetFileName(folder, file))
+		transactions, err := readCSV(ctx, GetFileName(path, file))
 		if err != nil {
-			return Email{}, ErrCantGetCsvFile
+			return Email{}, err
 		}
 
 		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
@@ -88,7 +88,8 @@ func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
 // GetFileName returns the absolute file path of a file
 func GetFileName(folder string, file string) string {
 	_, filename, _, _ := runtime.Caller(0)
-	testDir := filepath.Dir(filename)
+	currentDir := filepath.Dir(filename)
+	rootDir := filepath.Join(currentDir, "..", "..")
 
-	return filepath.Join(testDir, folder, file)
+	return filepath.Join(rootDir, folder, file)
 }
