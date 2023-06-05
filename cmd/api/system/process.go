@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"html/template"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,7 +11,7 @@ import (
 const (
 	path         string = "api/system/data"
 	file         string = "data.csv"
-	htmlFolder   string = "html"
+	htmlFolder   string = "api/system/html"
 	htmlFile     string = "account_info.html"
 	storiLogo    string = "stori_logo.jpeg"
 	templateFile string = "template.html"
@@ -37,7 +36,7 @@ func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLPr
 		templateFile := GetFileName(htmlFolder, templateFile)
 		outputFile := GetFileName(htmlFolder, htmlFile)
 
-		tmplBytes, err := ioutil.ReadFile(templateFile)
+		tmplBytes, err := os.ReadFile(templateFile)
 		if err != nil {
 			return []byte{}, ErrReadTemplateFile
 		}
@@ -59,7 +58,7 @@ func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLPr
 			return []byte{}, ErrTemplateExecute
 		}
 
-		htmlBytes, err := ioutil.ReadFile(outputFile)
+		htmlBytes, err := os.ReadFile(outputFile)
 		if err != nil {
 			return []byte{}, ErrReadFile
 		}
@@ -75,7 +74,7 @@ func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
 
 		transactions, err := readCSV(ctx, GetFileName(path, file))
 		if err != nil {
-			return Email{}, err
+			return Email{}, ErrCantGetCsvFile
 		}
 
 		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
