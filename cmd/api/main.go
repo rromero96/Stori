@@ -3,12 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/rromero96/roro-lib/cmd/config"
+	"github.com/olebedev/config"
 	"github.com/rromero96/roro-lib/cmd/web"
 
 	"github.com/rromero96/stori/cmd/api/system"
@@ -46,9 +47,20 @@ func run() error {
 	}
 
 	/*
+	   YML Configuration
+	*/
+	file, err := ioutil.ReadFile(system.GetFileName("../conf", "production.yml"))
+	if err != nil {
+		panic(err)
+	}
+	yamlString := string(file)
+
+	cfg, _ := config.ParseYaml(yamlString)
+
+	/*
 	   MYSQL client
 	*/
-	storiDBClient, err := createDBClient(getDBConnectionStringRoutes(storiDB))
+	storiDBClient, err := createDBClient(getDBConnectionStringRoutes(storiDB, cfg))
 	if err != nil {
 		return err
 	}
@@ -85,10 +97,10 @@ func createDBClient(connectionString string) (*sql.DB, error) {
 	return db, nil
 }
 
-func getDBConnectionStringRoutes(database string) string {
-	dbUsername := config.String("databases", fmt.Sprintf("mysql.%s.username", database), "")
-	dbPassword := config.String("databases", fmt.Sprintf("mysql.%s.password", database), "")
-	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
-	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
-	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName)
+func getDBConnectionStringRoutes(database string, yml *config.Config) string {
+	dbUserName, _ := yml.String(fmt.Sprintf("databases.mysql.%s.username", database))
+	dbPassword, _ := yml.String(fmt.Sprintf("databases.mysql.%s.password", database))
+	dbHost, _ := yml.String(fmt.Sprintf("databases.mysql.%s.db_host", database))
+	dbName, _ := yml.String(fmt.Sprintf("databases.mysql.%s.db_name", database))
+	return fmt.Sprintf(connectionStringFormat, dbUserName, dbPassword, dbHost, dbName)
 }
