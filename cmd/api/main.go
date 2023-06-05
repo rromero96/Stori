@@ -17,7 +17,6 @@ import (
 const (
 	systemGetInfo string = "/system/info/v1"
 	systemGetHtml string = "/system/html/v1"
-	storyLogo     string = "/static/stori_logo.jpeg"
 
 	//this when its on docker
 	connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
@@ -66,7 +65,6 @@ func run() error {
 	*/
 	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
 	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
-	app.Get(storyLogo, system.GetLogoV1())
 
 	log.Printf("server up and running in port %s", port)
 	return web.Run(ln, web.DefaultTimeouts, app)
