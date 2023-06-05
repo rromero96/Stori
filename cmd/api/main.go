@@ -93,11 +93,7 @@ func createDBClient(connectionString string) (*sql.DB, error) {
 func getDBConnectionStringRoutes(database string) string {
 	dbUsername := config.String("databases", fmt.Sprintf("mysql.%s.username", database), "")
 	dbPassword := config.String("databases", fmt.Sprintf("mysql.%s.password", database), "")
-	// TODO: check if host info can be uploaded from a secret
-	//dbHost := secret.FromEnv(config.String("databases", fmt.Sprintf("mysql.%s.host", database), ""))
 	dbHost := config.String("databases", fmt.Sprintf("mysql.%s.host", database), "")
 	dbName := config.String("databases", fmt.Sprintf("mysql.%s.db_name", database), "")
 	return fmt.Sprintf(connectionStringFormat, dbUsername, dbPassword, dbHost, dbName)
-
-	//return fmt.Sprintf(connectionStringFormat, "root", "", "stori")
 }

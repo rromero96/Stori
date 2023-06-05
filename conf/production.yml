@@ -1,7 +1,7 @@
 databases:
   mysql:
     stori:
-     username: "root"
-     password: ""
+     username: "stori2023"
+     password: "storiChallenge2023"
      db_name: "stori"
-     db_host: "161.22.22.183:3306"
+     db_host: "stori-app.cgd1k11bczhj.us-east-1.rds.amazonaws.com:3306"
