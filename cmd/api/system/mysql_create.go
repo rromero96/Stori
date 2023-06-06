@@ -65,7 +65,7 @@ func MakeMySQLFind(db *sql.DB) MySQLFind {
 				return -1, nil
 			}
 
-			return 0, ErrCantRunQuery
+			return -1, ErrCantRunQuery
 		}
 		if lastID.Valid {
 			return lastID.Int64, nil
