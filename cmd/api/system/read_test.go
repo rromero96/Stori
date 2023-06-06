@@ -11,7 +11,7 @@ import (
 )
 
 func TestReadCSV_success(t *testing.T) {
-	filename := system.GetFileName("data", "data.csv")
+	filename := system.GetFileName("api/system/data", "data.csv")
 
 	mySQLCreateMock := system.MockMySQLCreate(nil)
 	readFiles := system.MakeReadCSV(mySQLCreateMock)
@@ -36,7 +36,7 @@ func TestReadCSV_failsWhenCantOpenCsvFile(t *testing.T) {
 }
 
 func TestReadCSV_failsWhenMySQLCreateThrowsError(t *testing.T) {
-	filename := system.GetFileName("data", "data.csv")
+	filename := system.GetFileName("api/system/data", "data.csv")
 	err := errors.New("error")
 
 	mySQLCreateMock := system.MockMySQLCreate(err)

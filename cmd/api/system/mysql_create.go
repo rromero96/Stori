@@ -62,9 +62,9 @@ func MakeMySQLFind(db *sql.DB) MySQLFind {
 		err := db.QueryRow(queryFind).Scan(&lastID)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				// No elements in the database, return -1
 				return -1, nil
 			}
+
 			return 0, ErrCantRunQuery
 		}
 		if lastID.Valid {

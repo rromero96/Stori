@@ -1,24 +1,37 @@
 package system_test
 
+import (
+	"context"
+	"errors"
+	"testing"
+	"time"
+
+	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/rromero96/stori/cmd/api/system"
+	"github.com/stretchr/testify/assert"
+)
+
 const queryCreateMock string = "INSERT INTO stori.transactions \\(id, date, transaction, type\\) VALUES \\(\\?, \\?, \\?, \\?\\)"
 
-/* func TestMakeMySQLCreate_success(t *testing.T) {
+func TestMakeMySQLCreate_success(t *testing.T) {
 	db, mock, _ := sqlmock.New()
+	mysqlFindMock := system.MockMySQLFind(-1, nil)
 	mock.ExpectPrepare(queryCreateMock)
 	mock.ExpectExec(queryCreateMock).WillReturnResult(sqlmock.NewResult(1, 2))
 
-	got := system.MakeMySQLCreate(db)
+	got := system.MakeMySQLCreate(db, mysqlFindMock)
 
 	assert.NotNil(t, got)
 }
 
 func TestMySQLCreate_success(t *testing.T) {
 	db, mock, _ := sqlmock.New()
+	mysqlFindMock := system.MockMySQLFind(-1, nil)
 	mock.ExpectPrepare(queryCreateMock)
 	mock.ExpectExec(queryCreateMock).WillReturnResult(sqlmock.NewResult(1, 2))
 	transactions := []system.Transaction{system.MockTransaction(0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), "credit", +60.5)}
 
-	mysqlCreate := system.MakeMySQLCreate(db)
+	mysqlCreate := system.MakeMySQLCreate(db, mysqlFindMock)
 	ctx := context.Background()
 
 	got := mysqlCreate(ctx, transactions)
@@ -28,11 +41,12 @@ func TestMySQLCreate_success(t *testing.T) {
 
 func TestMySQLCreate_failsWhenCantPrepareStatement(t *testing.T) {
 	db, mock, _ := sqlmock.New()
+	mysqlFindMock := system.MockMySQLFind(-1, nil)
 	mock.ExpectPrepare("invalid statement")
 	mock.ExpectExec(queryCreateMock).WillReturnResult(sqlmock.NewResult(1, 2))
 	transactions := []system.Transaction{system.MockTransaction(0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), "credit", +60.5)}
 
-	mysqlCreate := system.MakeMySQLCreate(db)
+	mysqlCreate := system.MakeMySQLCreate(db, mysqlFindMock)
 	ctx := context.Background()
 
 	want := system.ErrCantPrepareStatement
@@ -43,11 +57,12 @@ func TestMySQLCreate_failsWhenCantPrepareStatement(t *testing.T) {
 
 func TestMySQLCreate_failsWhenCantRunQuery(t *testing.T) {
 	db, mock, _ := sqlmock.New()
+	mysqlFindMock := system.MockMySQLFind(-1, nil)
 	mock.ExpectPrepare(queryCreateMock)
 	mock.ExpectExec(queryCreateMock).WillReturnError(errors.New("some error"))
 	transactions := []system.Transaction{system.MockTransaction(0, time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC), "credit", +60.5)}
 
-	mysqlCreate := system.MakeMySQLCreate(db)
+	mysqlCreate := system.MakeMySQLCreate(db, mysqlFindMock)
 	ctx := context.Background()
 
 	want := system.ErrCantRunQuery
@@ -55,4 +70,3 @@ func TestMySQLCreate_failsWhenCantRunQuery(t *testing.T) {
 
 	assert.Equal(t, want, got)
 }
-*/
