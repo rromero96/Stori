@@ -75,7 +75,7 @@ func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
 
 		transactions, err := readCSV(ctx, GetFileName(path, file))
 		if err != nil {
-			return Email{}, err
+			return Email{}, ErrCantGetCsvFile
 		}
 
 		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
