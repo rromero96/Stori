@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: Golang CVS Processing System
+  description: |-
+    This is an api proccesor system that recieves a CSV file and saves it into a db, and shows the results in html form
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: rodrigoignacio932@gmail.com
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:8080/
+paths:
+  /system/info/v1:
+    get:
+      summary: Get Email Information
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: can't get info
+  /system/html/v1:
+    get:
+      summary: Get Email information as a HTML styled file
+      produces:
+        - text/html
+      responses:
+        200:
+          description: Successful response
+          content:
+            text/html:
+              schema:
+                type: string
+              example: |
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Account Info</title>
+                </head>
+                <body>
+                    <img src="/static/stori_logo.jpeg" alt="Stori Logo">
+                    <h1>Account Information</h1>
+                    <p>Hello, here is your accounts information:</p>
+                    <p>Total Balance is: $264.70</p>
+                    <p>Average Debit amount is: $-86.65</p>
+                    <p>Average Credit amount is: $219.00</p>
+                    <p>Number of transactions per month:</p>
+                    <ul>
+                        <li>Number of transactions in February: 5</li>
+                        <li>Number of transactions in January: 16</li>
+                    </ul>
+                    <p>Thanks,</p>
+                    <p>Your Bank</p>
+                </body>
+                </html>
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error:  can't write html
+components:
+  schemas:
+    Email:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: float
+          example: 264.70
+        average_debit:
+          type: number
+          format: float
+          example: -86.65
+        average_credit:
+          type: number
+          format: float
+          example: 219.00
+        working_months:
+          type: object
+          additionalProperties:
+            type: integer
+          example:
+            February: 5
+            January: 16
