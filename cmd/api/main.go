@@ -57,6 +57,17 @@ func run() error {
 
 	cfg, _ := config.ParseYaml(yamlString)
 
+	// Load the Swagger JSON file
+	/* 	doc, err := loads.Spec(system.GetFileName("../docs", "swagger.yml"))
+	   	if err != nil {
+	   		panic(err)
+	   	}
+
+	   	specString, err := doc.Spec().MarshalJSON()
+	   	if err != nil {
+	   		panic(err)
+	   	} */
+
 	/*
 	   MYSQL client
 	*/
@@ -80,6 +91,7 @@ func run() error {
 	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
 	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
 	app.Get(storyLogo, system.GetLogoV1())
+	//app.Get("/swagger.yml", system.GetSwaggerV1(specString))
 
 	log.Printf("server up and running in port %s", port)
 	return web.Run(ln, web.DefaultTimeouts, app)

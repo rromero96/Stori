@@ -45,3 +45,11 @@ func GetLogoV1() web.Handler {
 		return nil
 	}
 }
+
+/* func GetSwaggerV1(doc []byte) web.Handler {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		http.FileServer(http.Dir(GetFileName("../docs", "swagger.yml")))
+		return nil
+	}
+}
+*/
