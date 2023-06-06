@@ -6,22 +6,28 @@ import (
 	"strings"
 )
 
-const queryCreate = "INSERT INTO stori.transactions (id, date, transaction, type) VALUES "
+const (
+	queryCreate = "INSERT INTO stori.transactions (id, date, transaction, type) VALUES "
+	queryFind   = "SELECT MAX(id) FROM stori.transactions"
+)
 
-var lastID *int64
+type (
+	// MySQLCreate is a function that creates a transaction in the database
+	MySQLCreate func(ctx context.Context, transactions []Transaction) error
 
-// MySQLCreate is a function that creates a transaction in the database
-type MySQLCreate func(ctx context.Context, transactions []Transaction) error
+	// MySQLFind is a function that finds the last id in the database
+	MySQLFind func(ctx context.Context) (int64, error)
+)
 
 // MakeMySQLCreate creates a new MySQLCreate
-func MakeMySQLCreate(db *sql.DB) MySQLCreate {
+func MakeMySQLCreate(db *sql.DB, mySQLFind MySQLFind) MySQLCreate {
 	return func(ctx context.Context, transactions []Transaction) error {
-		if lastID == nil {
-			initialValue := int64(-1)
-			lastID = &initialValue
+		lastID, err := mySQLFind(ctx)
+		if err != nil {
+			return ErrCantGetLastID
 		}
 
-		if *lastID < transactions[0].ID {
+		if lastID < transactions[0].ID {
 			var inserts []string
 			var params []interface{}
 
@@ -39,18 +45,32 @@ func MakeMySQLCreate(db *sql.DB) MySQLCreate {
 			}
 			defer stmt.Close()
 
-			r, err := stmt.ExecContext(ctx, params...)
+			_, err = stmt.ExecContext(ctx, params...)
 			if err != nil {
 				return ErrCantRunQuery
 			}
-
-			id, err := r.LastInsertId()
-			if err != nil {
-				return ErrCantGetLastID
-			}
-			lastID = &id
 		}
 
 		return nil
+	}
+}
+
+// MakeMySQLFind creates a new MySQLFind
+func MakeMySQLFind(db *sql.DB) MySQLFind {
+	return func(ctx context.Context) (int64, error) {
+		var lastID sql.NullInt64
+		err := db.QueryRow(queryFind).Scan(&lastID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return -1, nil
+			}
+
+			return -1, ErrCantRunQuery
+		}
+		if lastID.Valid {
+			return lastID.Int64, nil
+		}
+
+		return -1, nil
 	}
 }

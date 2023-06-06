@@ -68,7 +68,8 @@ func run() error {
 	/*
 		Injections
 	*/
-	mysqlCreateTransactions := system.MakeMySQLCreate(storiDBClient)
+	mysqlIDFinder := system.MakeMySQLFind(storiDBClient)
+	mysqlCreateTransactions := system.MakeMySQLCreate(storiDBClient, mysqlIDFinder)
 	readCSV := system.MakeReadCSV(mysqlCreateTransactions)
 	processTransactions := system.MakeProcessTransactions(readCSV)
 	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)

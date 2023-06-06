@@ -33,6 +33,13 @@ func MockMySQLCreate(err error) MySQLCreate {
 	}
 }
 
+// MockMySQLFind mock
+func MockMySQLFind(id int64, err error) MySQLFind {
+	return func(context.Context) (int64, error) {
+		return id, err
+	}
+}
+
 // MockTransaction mock
 func MockTransaction(id int64, date time.Time, trType string, amount float64) Transaction {
 	return Transaction{
