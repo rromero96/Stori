@@ -2,6 +2,7 @@ package system_test
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ import (
 
 const (
 	queryCreateMock string = "INSERT INTO stori.transactions \\(id, date, transaction, type\\) VALUES \\(\\?, \\?, \\?, \\?\\)"
-	queryFindMock   string = "SELECT MAX(id) FROM stori.transactions"
+	queryFindMock   string = "SELECT MAX\\(id\\) FROM stori.transactions"
 )
 
 func TestMakeMySQLCreate_success(t *testing.T) {
@@ -108,9 +109,39 @@ func TestMySQLFind_success(t *testing.T) {
 
 	mysqlFind := system.MakeMySQLFind(db)
 
+	want := int64(10)
+	got, err := mysqlFind(ctx)
+
+	assert.Nil(t, err)
+	assert.Equal(t, got, want)
+}
+
+func TestMySQLFind_successWithNoRows(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	rows := mock.NewRows([]string{"MAX(id)"}).AddRow(-1)
+	mock.ExpectQuery(queryFindMock).WillReturnRows(rows)
+	mock.ExpectExec(queryCreateMock).WillReturnError(sql.ErrNoRows)
+	ctx := context.Background()
+
+	mysqlFind := system.MakeMySQLFind(db)
+
 	want := int64(-1)
 	got, err := mysqlFind(ctx)
 
 	assert.Nil(t, err)
+	assert.Equal(t, got, want)
+}
+
+func TestMySQLFind_failsWhenCantRunQuery(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	mock.ExpectPrepare(queryFindMock)
+	mock.ExpectExec(queryFindMock).WillReturnError(errors.New("some error"))
+	ctx := context.Background()
+
+	mysqlFind := system.MakeMySQLFind(db)
+
+	want := system.ErrCantRunQuery
+	_, got := mysqlFind(ctx)
+
 	assert.Equal(t, got, want)
 }
