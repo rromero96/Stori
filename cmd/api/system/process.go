@@ -12,7 +12,7 @@ import (
 const (
 	path         string = "api/system/data"
 	file         string = "data.csv"
-	htmlFolder   string = "html"
+	htmlFolder   string = "api/system/html"
 	htmlFile     string = "account_info.html"
 	storiLogo    string = "stori_logo.jpeg"
 	templateFile string = "template.html"
