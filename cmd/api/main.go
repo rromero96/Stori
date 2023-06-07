@@ -4,49 +4,24 @@ import (
 	"database/sql"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"net"
-	"net/http"
 	"time"
 
+	"github.com/aws/aws-lambda-go/lambda"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/olebedev/config"
-	"github.com/rromero96/roro-lib/cmd/web"
 
 	"github.com/rromero96/stori/cmd/api/system"
 )
 
 const (
-	systemGetInfo string = "/system/info/v1"
-	systemGetHtml string = "/system/html/v1"
-	storyLogo     string = "/static/stori_logo.jpeg"
-
-	//this when its on docker
+	systemGetHtml          string = "/system/html/v1"
+	storyLogo              string = "/static/stori_logo.jpeg"
 	connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
-	//connectionStringFormat string = "%s:%s@tcp/%s?charset=utf8&parseTime=true"
-	mysqlDriver string = "mysql"
-	storiDB     string = "stori"
+	mysqlDriver            string = "mysql"
+	storiDB                string = "stori"
 )
 
 func main() {
-	if err := run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func run() error {
-	/*
-		Server Configuration
-	*/
-	app := web.New()
-
-	port := "8080"
-	address := ":" + port
-	ln, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	/*
 	   YML Configuration
 	*/
@@ -63,7 +38,7 @@ func run() error {
 	*/
 	storiDBClient, err := createDBClient(getDBConnectionStringRoutes(storiDB, cfg))
 	if err != nil {
-		return err
+		panic(err)
 	}
 
 	/*
@@ -71,26 +46,10 @@ func run() error {
 	*/
 	mysqlIDFinder := system.MakeMySQLFind(storiDBClient)
 	mysqlCreateTransactions := system.MakeMySQLCreate(storiDBClient, mysqlIDFinder)
-	readCSV := system.MakeReadCSV(mysqlCreateTransactions)
-	processTransactions := system.MakeProcessTransactions(readCSV)
-	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)
+	readCSV := system.MakeReadCSV()
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSV, mysqlCreateTransactions)
 
-	/*
-		Endpoints
-	*/
-	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
-	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
-
-	/*
-		Static Files serve
-	*/
-	app.Get(storyLogo, func(w http.ResponseWriter, r *http.Request) error {
-		http.ServeFile(w, r, system.GetFileName(system.HtmlFolder, system.StoriLogo))
-		return nil
-	})
-
-	log.Printf("server up and running in port %s", port)
-	return web.Run(ln, web.DefaultTimeouts, app)
+	lambda.Start(system.GetHTMLInfoV1(htmlProcessTransactions))
 }
 
 func createDBClient(connectionString string) (*sql.DB, error) {
