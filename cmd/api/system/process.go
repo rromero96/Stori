@@ -18,24 +18,30 @@ const (
 )
 
 type (
-	// ProcessTransactions transforms the data recieved in the CSV file into an Email struct
-	ProcessTransactions func(ctx context.Context) (Email, error)
-
 	// HTMLProcessTransactions renders an HTML from the data recieved in the CSV file
 	HTMLProcessTransactions func(ctx context.Context) ([]byte, error)
 )
 
 // MakeHTMLProcessTransactions creates an HTMLProcessTransactions function
-func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLProcessTransactions {
+func MakeHTMLProcessTransactions(readCSV ReadCSV, mySQLCreate MySQLCreate) HTMLProcessTransactions {
 	return func(ctx context.Context) ([]byte, error) {
-		email, err := processTransactions(ctx)
+		var email Email
+
+		transactions, err := readCSV(ctx, GetFileName(path, file))
 		if err != nil {
-			return []byte{}, ErrCantGetTransactionInfo
+			return []byte{}, ErrCantGetCsvFile
 		}
+
+		err = mySQLCreate(ctx, transactions)
+		if err != nil {
+			return []byte{}, ErrCantCreateTransactions
+		}
+
+		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
+		email.WorkingMonths = transactionsPerMonth(transactions)
 
 		templateFile := GetFileName(HtmlFolder, templateFile)
 		outputFile := GetFileName(HtmlFolder, htmlFile)
-
 		tmplBytes, err := os.ReadFile(templateFile)
 		if err != nil {
 			return []byte{}, ErrReadTemplateFile
@@ -64,23 +70,6 @@ func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLPr
 		}
 
 		return htmlBytes, nil
-	}
-}
-
-// MakeProcessTransactions  creates a ProcessTransactions function
-func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
-	return func(ctx context.Context) (Email, error) {
-		var email Email
-
-		transactions, err := readCSV(ctx, GetFileName(path, file))
-		if err != nil {
-			return Email{}, ErrCantGetCsvFile
-		}
-
-		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
-		email.WorkingMonths = transactionsPerMonth(transactions)
-
-		return email, nil
 	}
 }
 

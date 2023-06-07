@@ -12,13 +12,6 @@ func MockReadCSV(trans []Transaction, err error) ReadCSV {
 	}
 }
 
-// MockProcessTransactions mock
-func MockProcessTransactions(email Email, err error) ProcessTransactions {
-	return func(context.Context) (Email, error) {
-		return email, err
-	}
-}
-
 // MockHTMLProcessTransactions mock
 func MockHTMLProcessTransactions(html []byte, err error) HTMLProcessTransactions {
 	return func(context.Context) ([]byte, error) {

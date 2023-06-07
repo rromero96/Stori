@@ -2,7 +2,6 @@ package system_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/rromero96/stori/cmd/api/system"
@@ -12,9 +11,7 @@ import (
 
 func TestReadCSV_success(t *testing.T) {
 	filename := system.GetFileName("api/system/data", "data.csv")
-
-	mySQLCreateMock := system.MockMySQLCreate(nil)
-	readFiles := system.MakeReadCSV(mySQLCreateMock)
+	readFiles := system.MakeReadCSV()
 	ctx := context.Background()
 
 	want := system.MockTransactions()
@@ -25,26 +22,11 @@ func TestReadCSV_success(t *testing.T) {
 }
 
 func TestReadCSV_failsWhenCantOpenCsvFile(t *testing.T) {
-	mySQLCreateMock := system.MockMySQLCreate(nil)
-	readFiles := system.MakeReadCSV(mySQLCreateMock)
+	readFiles := system.MakeReadCSV()
 	ctx := context.Background()
 
 	want := system.ErrOpeningCsv
 	_, got := readFiles(ctx, "")
-
-	assert.Equal(t, got, want)
-}
-
-func TestReadCSV_failsWhenMySQLCreateThrowsError(t *testing.T) {
-	filename := system.GetFileName("api/system/data", "data.csv")
-	err := errors.New("error")
-
-	mySQLCreateMock := system.MockMySQLCreate(err)
-	readFiles := system.MakeReadCSV(mySQLCreateMock)
-	ctx := context.Background()
-
-	want := system.ErrCantCreateTransactions
-	_, got := readFiles(ctx, filename)
 
 	assert.Equal(t, got, want)
 }

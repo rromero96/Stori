@@ -20,10 +20,6 @@ type (
 	}
 )
 
-func (e Email) toDTO() EmailDTO {
-	return EmailDTO(e)
-}
-
 func getBalanceInfo(transactions []Transaction) (float64, float64, float64) {
 	var total, debit, credit float64
 	for _, t := range transactions {
