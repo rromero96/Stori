@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"time"
 
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/olebedev/config"
@@ -49,7 +51,9 @@ func main() {
 	readCSV := system.MakeReadCSV()
 	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSV, mysqlCreateTransactions)
 
-	lambda.Start(system.GetHTMLInfoV1(htmlProcessTransactions))
+	lambda.Start(func(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+		return system.GetHTMLInfoV1(ctx, request, htmlProcessTransactions)
+	})
 }
 
 func createDBClient(connectionString string) (*sql.DB, error) {

@@ -75,9 +75,15 @@ func MakeHTMLProcessTransactions(readCSV ReadCSV, mySQLCreate MySQLCreate) HTMLP
 
 // GetFileName returns the absolute file path of a file
 func GetFileName(folder string, file string) string {
-	_, filename, _, _ := runtime.Caller(0)
-	currentDir := filepath.Dir(filename)
-	rootDir := filepath.Join(currentDir, "..", "..")
+	if rootDir := os.Getenv("LAMBDA_TASK_ROOT"); rootDir != "" {
+		// Running in AWS Lambda environment
+		return filepath.Join(rootDir, folder, file)
+	} else {
+		// Running locally
+		_, filename, _, _ := runtime.Caller(0)
+		currentDir := filepath.Dir(filename)
+		rootDir := filepath.Join(currentDir, "..", "..")
 
-	return filepath.Join(rootDir, folder, file)
+		return filepath.Join(rootDir, folder, file)
+	}
 }
