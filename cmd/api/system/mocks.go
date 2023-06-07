@@ -12,10 +12,24 @@ func MockReadCSV(trans []Transaction, err error) ReadCSV {
 	}
 }
 
-// MockProcessTransactions mock
-func MockProcessTransactions(email Email, err error) ProcessTransactions {
-	return func(context.Context) (Email, error) {
-		return email, err
+// MockHTMLProcessTransactions mock
+func MockHTMLProcessTransactions(html []byte, err error) HTMLProcessTransactions {
+	return func(context.Context) ([]byte, error) {
+		return html, err
+	}
+}
+
+// MockMySQLCreate mock
+func MockMySQLCreate(err error) MySQLCreate {
+	return func(context.Context, []Transaction) error {
+		return err
+	}
+}
+
+// MockMySQLFind mock
+func MockMySQLFind(id int64, err error) MySQLFind {
+	return func(context.Context) (int64, error) {
+		return id, err
 	}
 }
 
@@ -58,22 +72,18 @@ func MockTransactions() []Transaction {
 
 // MockEmail mock
 func MockEmail() Email {
-	monthCount := MockMonthsMap()
-	email := Email{
+	return Email{
 		Balance:       264.69999999999993,
 		AverageDebit:  -86.65000000000002,
 		AverageCredit: 219,
+		WorkingMonths: MockMonthsMap(),
 	}
-
-	email.Body = getEmailBody(email.Balance, email.AverageDebit, email.AverageCredit, monthCount)
-
-	return email
 }
 
 // MockMonthsMap mock
-func MockMonthsMap() map[time.Month]int {
-	return map[time.Month]int{
-		time.January:  16,
-		time.February: 5,
+func MockMonthsMap() map[string]int {
+	return map[string]int{
+		"January":  16,
+		"February": 5,
 	}
 }

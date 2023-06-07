@@ -1,7 +1,6 @@
 package system
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -17,7 +16,7 @@ type (
 		Balance       float64
 		AverageDebit  float64
 		AverageCredit float64
-		Body          string
+		WorkingMonths map[string]int
 	}
 )
 
@@ -37,38 +36,13 @@ func getBalanceInfo(transactions []Transaction) (float64, float64, float64) {
 	return total, debit / 2, credit / 2
 }
 
-func transactionsPerMonth(transactions []Transaction) map[time.Month]int {
-	monthCount := make(map[time.Month]int)
+func transactionsPerMonth(transactions []Transaction) map[string]int {
+	monthCount := make(map[string]int)
 
 	for _, t := range transactions {
-		month := t.Date.Month()
+		month := t.Date.Month().String()
 		monthCount[month]++
 	}
 
 	return monthCount
-}
-
-func getEmailBody(balance float64, avgDebit float64, avgCredit float64, workingMonths map[time.Month]int) string {
-	return fmt.Sprintf(`Hello,
-
-	Here is your accounts information.
-
-	Total Balance is: $ %v ,
-	Average Debit amount is: $ %v ,
-	Average Credit amount is: $ %v ,
-	%s
-
-	Thanks,
-	Your Bank
-	`, balance, avgDebit, avgCredit, getTransactionsPerMonth(workingMonths))
-}
-
-func getTransactionsPerMonth(workingMonths map[time.Month]int) string {
-	var res string
-
-	for month, count := range workingMonths {
-		res += fmt.Sprintf("Number of transactions in %s: %d\n", month.String(), count)
-	}
-
-	return res
 }

@@ -2,39 +2,82 @@ package system
 
 import (
 	"context"
+	"html/template"
+	"os"
 	"path/filepath"
 	"runtime"
 )
 
 const (
-	folder string = "data"
-	file   string = "data.csv"
+	path         string = "api/system/data"
+	file         string = "data.csv"
+	HtmlFolder   string = "api/system/html"
+	htmlFile     string = "account_info.html"
+	StoriLogo    string = "stori_logo.jpeg"
+	templateFile string = "template.html"
 )
 
-type ProcessTransactions func(ctx context.Context) (Email, error)
+type (
+	// HTMLProcessTransactions renders an HTML from the data recieved in the CSV file
+	HTMLProcessTransactions func(ctx context.Context) ([]byte, error)
+)
 
-func MakeProcessTransactions(readCSV ReadCSV) ProcessTransactions {
-	return func(ctx context.Context) (Email, error) {
+// MakeHTMLProcessTransactions creates an HTMLProcessTransactions function
+func MakeHTMLProcessTransactions(readCSV ReadCSV, mySQLCreate MySQLCreate) HTMLProcessTransactions {
+	return func(ctx context.Context) ([]byte, error) {
 		var email Email
 
-		transactions, err := readCSV(ctx, GetFileName())
+		transactions, err := readCSV(ctx, GetFileName(path, file))
 		if err != nil {
-			return Email{}, ErrCantGetCsvFile
+			return []byte{}, ErrCantGetCsvFile
+		}
+
+		err = mySQLCreate(ctx, transactions)
+		if err != nil {
+			return []byte{}, ErrCantCreateTransactions
 		}
 
 		email.Balance, email.AverageDebit, email.AverageCredit = getBalanceInfo(transactions)
-		monthCount := transactionsPerMonth(transactions)
+		email.WorkingMonths = transactionsPerMonth(transactions)
 
-		email.Body = getEmailBody(email.Balance, email.AverageDebit, email.AverageCredit, monthCount)
+		templateFile := GetFileName(HtmlFolder, templateFile)
+		outputFile := GetFileName(HtmlFolder, htmlFile)
+		tmplBytes, err := os.ReadFile(templateFile)
+		if err != nil {
+			return []byte{}, ErrReadTemplateFile
+		}
 
-		return email, nil
+		templateName := "accountInfo"
+		template, err := template.New(templateName).Parse(string(tmplBytes))
+		if err != nil {
+			return []byte{}, ErrTemplateParse
+		}
+
+		output, err := os.Create(outputFile)
+		if err != nil {
+			return []byte{}, ErrCreateOutputFile
+		}
+		defer output.Close()
+
+		err = template.Execute(output, email)
+		if err != nil {
+			return []byte{}, ErrTemplateExecute
+		}
+
+		htmlBytes, err := os.ReadFile(outputFile)
+		if err != nil {
+			return []byte{}, ErrReadFile
+		}
+
+		return htmlBytes, nil
 	}
 }
 
-func GetFileName() string {
-	// Get the current file's directory
+// GetFileName returns the absolute file path of a file
+func GetFileName(folder string, file string) string {
 	_, filename, _, _ := runtime.Caller(0)
-	testDir := filepath.Dir(filename)
-	// Construct the absolute file path to the CSV file
-	return filepath.Join(testDir, folder, file)
+	currentDir := filepath.Dir(filename)
+	rootDir := filepath.Join(currentDir, "..", "..")
+
+	return filepath.Join(rootDir, folder, file)
 }

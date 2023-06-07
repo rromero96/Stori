@@ -8,33 +8,47 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMakeProcessTransaccion_success(t *testing.T) {
-	readCSV := system.MockReadCSV(system.MockTransactions(), nil)
+func TestMakeHTMLProcessTransactions_success(t *testing.T) {
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
 
-	got := system.MakeProcessTransactions(readCSV)
+	got := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 
 	assert.NotNil(t, got)
 }
 
-func TestProcessTransaccion_success(t *testing.T) {
-	readCSV := system.MockReadCSV(system.MockTransactions(), nil)
-	processTransactions := system.MakeProcessTransactions(readCSV)
+func TestHTMLProcessTransactions_success(t *testing.T) {
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 	ctx := context.Background()
 
-	want := system.MockEmail()
-	got, err := processTransactions(ctx)
+	got, err := htmlProcessTransactions(ctx)
 
 	assert.Nil(t, err)
-	assert.Equal(t, want, got)
+	assert.NotNil(t, got)
 }
 
-func TestProcessTransaccion_failsWhenReadCSVThrowsError(t *testing.T) {
-	readCSV := system.MockReadCSV(nil, system.ErrReadingCsv)
-	processTransactions := system.MakeProcessTransactions(readCSV)
+func TestHTMLProcessTransactions_failsWhenReadCSVThrowsError(t *testing.T) {
+	readCSVmock := system.MockReadCSV(nil, system.ErrOpeningCsv)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 	ctx := context.Background()
 
 	want := system.ErrCantGetCsvFile
-	_, got := processTransactions(ctx)
+	_, got := htmlProcessTransactions(ctx)
+
+	assert.Equal(t, want, got)
+}
+
+func TestHTMLProcessTransactions_failsWhenMySQLCreateThworsError(t *testing.T) {
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(system.ErrCantPrepareStatement)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
+	ctx := context.Background()
+
+	want := system.ErrCantCreateTransactions
+	_, got := htmlProcessTransactions(ctx)
 
 	assert.Equal(t, want, got)
 }

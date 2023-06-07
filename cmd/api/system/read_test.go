@@ -10,8 +10,7 @@ import (
 )
 
 func TestReadCSV_success(t *testing.T) {
-	filename := system.GetFileName()
-
+	filename := system.GetFileName("api/system/data", "data.csv")
 	readFiles := system.MakeReadCSV()
 	ctx := context.Background()
 
@@ -22,7 +21,7 @@ func TestReadCSV_success(t *testing.T) {
 	assert.Equal(t, got, want)
 }
 
-func TestReadCSV_fails(t *testing.T) {
+func TestReadCSV_failsWhenCantOpenCsvFile(t *testing.T) {
 	readFiles := system.MakeReadCSV()
 	ctx := context.Background()
 
