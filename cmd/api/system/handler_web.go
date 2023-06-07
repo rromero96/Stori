@@ -37,19 +37,3 @@ func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) web.Handler 
 		return web.EncodeJSON(w, nil, http.StatusOK)
 	}
 }
-
-// GetLogoV1 show the logo of Stori
-func GetLogoV1() web.Handler {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		http.ServeFile(w, r, GetFileName(htmlFolder, storiLogo))
-		return nil
-	}
-}
-
-/* func GetSwaggerV1(doc []byte) web.Handler {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		http.FileServer(http.Dir(GetFileName("../docs", "swagger.yml")))
-		return nil
-	}
-}
-*/

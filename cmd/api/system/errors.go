@@ -19,6 +19,7 @@ var (
 )
 
 const (
-	CantGetInfo   string = "can't get info"
-	CantWriteHtml string = "can't write html"
+	CantGetInfo         string = "can't get info"
+	CantWriteHtml       string = "can't write html"
+	CantWriteSwaggerYML string = "can't write swagger yml"
 )
