@@ -8,48 +8,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMakeProcessTransaccion_success(t *testing.T) {
-	readCSV := system.MockReadCSV(system.MockTransactions(), nil)
-
-	got := system.MakeProcessTransactions(readCSV)
-
-	assert.NotNil(t, got)
-}
-
-func TestProcessTransaccion_success(t *testing.T) {
-	readCSV := system.MockReadCSV(system.MockTransactions(), nil)
-	processTransactions := system.MakeProcessTransactions(readCSV)
-	ctx := context.Background()
-
-	want := system.MockEmail()
-	got, err := processTransactions(ctx)
-
-	assert.Nil(t, err)
-	assert.Equal(t, want, got)
-}
-
-func TestProcessTransaccion_failsWhenReadCSVThrowsError(t *testing.T) {
-	readCSV := system.MockReadCSV(nil, system.ErrReadingCsv)
-	processTransactions := system.MakeProcessTransactions(readCSV)
-	ctx := context.Background()
-
-	want := system.ErrCantGetCsvFile
-	_, got := processTransactions(ctx)
-
-	assert.Equal(t, want, got)
-}
-
 func TestMakeHTMLProcessTransactions_success(t *testing.T) {
-	processTransactions := system.MockProcessTransactions(system.MockEmail(), nil)
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
 
-	got := system.MakeHTMLProcessTransactions(processTransactions)
+	got := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 
 	assert.NotNil(t, got)
 }
 
 func TestHTMLProcessTransactions_success(t *testing.T) {
-	processTransactions := system.MockProcessTransactions(system.MockEmail(), nil)
-	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 	ctx := context.Background()
 
 	got, err := htmlProcessTransactions(ctx)
@@ -58,12 +29,25 @@ func TestHTMLProcessTransactions_success(t *testing.T) {
 	assert.NotNil(t, got)
 }
 
-func TestHTMLProcessTransactions_failsWhenProcessTransactionsThrowsError(t *testing.T) {
-	processTransactions := system.MockProcessTransactions(system.Email{}, system.ErrCantGetCsvFile)
-	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)
+func TestHTMLProcessTransactions_failsWhenReadCSVThrowsError(t *testing.T) {
+	readCSVmock := system.MockReadCSV(nil, system.ErrOpeningCsv)
+	mysqlCreateMock := system.MockMySQLCreate(nil)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
 	ctx := context.Background()
 
-	want := system.ErrCantGetTransactionInfo
+	want := system.ErrCantGetCsvFile
+	_, got := htmlProcessTransactions(ctx)
+
+	assert.Equal(t, want, got)
+}
+
+func TestHTMLProcessTransactions_failsWhenMySQLCreateThworsError(t *testing.T) {
+	readCSVmock := system.MockReadCSV(system.MockTransactions(), nil)
+	mysqlCreateMock := system.MockMySQLCreate(system.ErrCantPrepareStatement)
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSVmock, mysqlCreateMock)
+	ctx := context.Background()
+
+	want := system.ErrCantCreateTransactions
 	_, got := htmlProcessTransactions(ctx)
 
 	assert.Equal(t, want, got)
