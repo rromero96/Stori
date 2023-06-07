@@ -71,14 +71,12 @@ func run() error {
 	*/
 	mysqlIDFinder := system.MakeMySQLFind(storiDBClient)
 	mysqlCreateTransactions := system.MakeMySQLCreate(storiDBClient, mysqlIDFinder)
-	readCSV := system.MakeReadCSV(mysqlCreateTransactions)
-	processTransactions := system.MakeProcessTransactions(readCSV)
-	htmlProcessTransactions := system.MakeHTMLProcessTransactions(processTransactions)
+	readCSV := system.MakeReadCSV()
+	htmlProcessTransactions := system.MakeHTMLProcessTransactions(readCSV, mysqlCreateTransactions)
 
 	/*
 		Endpoints
 	*/
-	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
 	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
 
 	/*
