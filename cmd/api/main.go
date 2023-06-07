@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"net/http"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -79,7 +80,14 @@ func run() error {
 	*/
 	app.Get(systemGetInfo, system.GetInfoV1(processTransactions))
 	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
-	app.Get(storyLogo, system.GetLogoV1())
+
+	/*
+		Static Files serve
+	*/
+	app.Get(storyLogo, func(w http.ResponseWriter, r *http.Request) error {
+		http.ServeFile(w, r, system.GetFileName(system.HtmlFolder, system.StoriLogo))
+		return nil
+	})
 
 	log.Printf("server up and running in port %s", port)
 	return web.Run(ln, web.DefaultTimeouts, app)

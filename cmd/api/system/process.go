@@ -11,9 +11,9 @@ import (
 const (
 	path         string = "api/system/data"
 	file         string = "data.csv"
-	htmlFolder   string = "api/system/html"
+	HtmlFolder   string = "api/system/html"
 	htmlFile     string = "account_info.html"
-	storiLogo    string = "stori_logo.jpeg"
+	StoriLogo    string = "stori_logo.jpeg"
 	templateFile string = "template.html"
 )
 
@@ -33,8 +33,8 @@ func MakeHTMLProcessTransactions(processTransactions ProcessTransactions) HTMLPr
 			return []byte{}, ErrCantGetTransactionInfo
 		}
 
-		templateFile := GetFileName(htmlFolder, templateFile)
-		outputFile := GetFileName(htmlFolder, htmlFile)
+		templateFile := GetFileName(HtmlFolder, templateFile)
+		outputFile := GetFileName(HtmlFolder, htmlFile)
 
 		tmplBytes, err := os.ReadFile(templateFile)
 		if err != nil {
