@@ -17,11 +17,12 @@ func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) web.Handler 
 
 		}
 
+		w.WriteHeader(http.StatusOK)
 		_, err = w.Write(html)
 		if err != nil {
 			return web.NewError(http.StatusInternalServerError, CantWriteHtml)
 		}
 
-		return web.EncodeJSON(w, nil, http.StatusOK)
+		return nil
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 const (
@@ -41,34 +42,24 @@ func MakeHTMLProcessTransactions(readCSV ReadCSV, mySQLCreate MySQLCreate) HTMLP
 		email.WorkingMonths = transactionsPerMonth(transactions)
 
 		templateFile := GetFileName(HtmlFolder, templateFile)
-		outputFile := GetFileName(HtmlFolder, htmlFile)
 		tmplBytes, err := os.ReadFile(templateFile)
 		if err != nil {
 			return []byte{}, ErrReadTemplateFile
 		}
 
+		var buf strings.Builder
 		templateName := "accountInfo"
-		template, err := template.New(templateName).Parse(string(tmplBytes))
+		tmpl, err := template.New(templateName).Parse(string(tmplBytes))
 		if err != nil {
 			return []byte{}, ErrTemplateParse
 		}
 
-		output, err := os.Create(outputFile)
-		if err != nil {
-			return []byte{}, ErrCreateOutputFile
-		}
-		defer output.Close()
-
-		err = template.Execute(output, email)
+		err = tmpl.Execute(&buf, email)
 		if err != nil {
 			return []byte{}, ErrTemplateExecute
 		}
 
-		htmlBytes, err := os.ReadFile(outputFile)
-		if err != nil {
-			return []byte{}, ErrReadFile
-		}
-
+		htmlBytes := []byte(buf.String())
 		return htmlBytes, nil
 	}
 }
