@@ -5,7 +5,7 @@
     <title>Account Info</title>
 </head>
 <body>
-    <img src="/static/stori_logo.jpeg" alt="Stori Logo">
+    <img src="https://www.storicard.com/_next/static/media/icon-pay-services.089b3e6d.svg" alt="Stori Logo">
     <h1>Account Information</h1>
     <p>Hello, here is your accounts information:</p>
     <p>Total Balance is: ${{printf "%.2f" .Balance}}</p>
@@ -13,8 +13,12 @@
     <p>Average Credit amount is: ${{printf "%.2f" .AverageCredit}}</p>
     <p>Number of transactions per month:</p>
     <ul>
-        {{range $month, $count := .WorkingMonths}}
-        <li>Number of transactions in {{$month}}: {{$count}}</li>
+        {{if .WorkingMonths}}
+            {{range $month, $count := .WorkingMonths}}
+            <li>Number of transactions in {{$month}}: {{$count}}</li>
+            {{end}}
+        {{else}}
+            <li>No transactions found.</li>
         {{end}}
     </ul>
     <p>Thanks,</p>
