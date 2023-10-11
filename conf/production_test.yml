@@ -1,0 +1,7 @@
+databases:
+  mysql:
+    stori:
+     username: "root"
+     password: ""
+     db_name: "stori"
+     db_host: "localhost:3306"

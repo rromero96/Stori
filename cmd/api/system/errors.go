@@ -1,6 +1,10 @@
 package system
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/gin-gonic/gin"
+)
 
 var (
 	ErrOpeningCsv             = errors.New("error opening csv")
@@ -21,3 +25,12 @@ const (
 	CantWriteHtml       string = "can't write html"
 	CantWriteSwaggerYML string = "can't write swagger yml"
 )
+
+type Error struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func WebError(c *gin.Context, code int, message string) {
+	c.JSON(code, Error{Code: code, Message: message})
+}

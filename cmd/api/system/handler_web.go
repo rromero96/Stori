@@ -3,26 +3,21 @@ package system
 import (
 	"net/http"
 
-	"github.com/rromero96/roro-lib/cmd/web"
+	"github.com/gin-gonic/gin"
 )
 
 // GetHTMLInfoV1 show the information about the csv balance file in html format
-func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) web.Handler {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		w.Header().Set("Content-Type", "text/html")
-
-		html, err := htmlProcessTransactions(r.Context())
+func GetHTMLInfoV1(htmlProcessTransactions HTMLProcessTransactions) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		html, err := htmlProcessTransactions(c)
 		if err != nil {
-			return web.NewError(http.StatusInternalServerError, CantGetInfo)
-
+			WebError(c, http.StatusInternalServerError, CantGetInfo)
 		}
 
-		w.WriteHeader(http.StatusOK)
-		_, err = w.Write(html)
+		c.Writer.WriteHeader(http.StatusOK)
+		_, err = c.Writer.Write(html)
 		if err != nil {
-			return web.NewError(http.StatusInternalServerError, CantWriteHtml)
+			WebError(c, http.StatusInternalServerError, CantWriteHtml)
 		}
-
-		return nil
 	}
 }

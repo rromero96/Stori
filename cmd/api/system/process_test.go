@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/rromero96/stori/cmd/api/system"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/rromero96/stori/cmd/api/system"
 )
 
 func TestMakeHTMLProcessTransactions_success(t *testing.T) {

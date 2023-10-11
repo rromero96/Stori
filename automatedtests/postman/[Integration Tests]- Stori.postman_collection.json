@@ -1,56 +1,11 @@
 {
 	"info": {
-		"_postman_id": "4f29fe43-1376-445c-a70e-2e3a5466a421",
+		"_postman_id": "ca2fb769-d029-41c2-91b7-fc6409abedf9",
 		"name": "[Integration Tests]- Stori",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "18593853"
 	},
 	"item": [
-		{
-			"name": "GetInfoV1- OK",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\",",
-							"function(){",
-							"    pm.response.to.have.status(200)",
-							"})"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{localhost}}/system/info/v1",
-					"host": [
-						"{{localhost}}"
-					],
-					"path": [
-						"system",
-						"info",
-						"v1"
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "GetHTMLInfoV1- OK",
 			"event": [
@@ -91,50 +46,6 @@
 						"system",
 						"html",
 						"v1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GetLogoV1- OK",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\",",
-							"function(){",
-							"    pm.response.to.have.status(200)",
-							"})"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{localhost}}/static/stori_logo.jpeg",
-					"host": [
-						"{{localhost}}"
-					],
-					"path": [
-						"static",
-						"stori_logo.jpeg"
 					]
 				}
 			},

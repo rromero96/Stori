@@ -8,8 +8,9 @@ import (
 	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/rromero96/stori/cmd/api/system"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/rromero96/stori/cmd/api/system"
 )
 
 const (

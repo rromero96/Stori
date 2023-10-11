@@ -5,26 +5,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/olebedev/config"
-	"github.com/rromero96/roro-lib/cmd/web"
 
 	"github.com/rromero96/stori/cmd/api/system"
 )
 
 const (
-	systemGetInfo string = "/system/info/v1"
 	systemGetHtml string = "/system/html/v1"
-	storyLogo     string = "/static/stori_logo.jpeg"
 
-	//this when its on docker
 	connectionStringFormat string = "%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true"
-	//connectionStringFormat string = "%s:%s@tcp/%s?charset=utf8&parseTime=true"
-	mysqlDriver string = "mysql"
-	storiDB     string = "stori"
+	mysqlDriver            string = "mysql"
+	storiDB                string = "stori"
 )
 
 func main() {
@@ -37,14 +32,10 @@ func run() error {
 	/*
 		Server Configuration
 	*/
-	app := web.New()
+	app := gin.Default()
 
 	port := "8080"
 	address := ":" + port
-	ln, err := net.Listen("tcp", address)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	/*
 	   YML Configuration
@@ -76,10 +67,11 @@ func run() error {
 	/*
 		Endpoints
 	*/
-	app.Get(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
+	app.GET(systemGetHtml, system.GetHTMLInfoV1(htmlProcessTransactions))
 
 	log.Printf("server up and running in port %s", port)
-	return web.Run(ln, web.DefaultTimeouts, app)
+	app.Run(address)
+	return nil
 }
 
 func createDBClient(connectionString string) (*sql.DB, error) {
