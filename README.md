@@ -17,3 +17,9 @@ This application was made by Rodrigo Romero using:
 The application is conected to the RDS DB so you don't have to configure MYSQL in your local machine, in case you want to do that the SQL folder has the information about the db and you can set the credentials in production_test.yml. After that in main.go you have to make sure that the yaml that has to be used is the test one.
 
 The folder automatedtests has the collection in it if you want to try in on Postman.
+
+## Code Interface
+- The application reads the csv file with the transactions information
+- Transforms this into a data type transactions and saves it into the database
+- Then it prepares the information to make the email
+- Renders the information email styled to the client
