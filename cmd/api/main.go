@@ -40,7 +40,7 @@ func run() error {
 	/*
 	   YML Configuration
 	*/
-	file, err := ioutil.ReadFile(system.GetFileName("../conf", "production_test.yml"))
+	file, err := ioutil.ReadFile(system.GetFileName("../conf", "production.yml"))
 	if err != nil {
 		panic(err)
 	}
