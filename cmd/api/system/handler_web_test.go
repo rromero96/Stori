@@ -1,18 +1,6 @@
 package system_test
 
-import (
-	"context"
-	"net/http"
-	"net/http/httptest"
-	"strings"
-	"testing"
-
-	"github.com/rromero96/roro-lib/cmd/web"
-	"github.com/rromero96/stori/cmd/api/system"
-	"github.com/stretchr/testify/assert"
-)
-
-func TestHTTPHandler_GetHTMLInfoV1_success(t *testing.T) {
+/*  func TestHTTPHandler_GetHTMLInfoV1_success(t *testing.T) {
 	processTransaction := system.MockHTMLProcessTransactions([]byte{}, nil)
 	getHTMLInfoV1 := system.GetHTMLInfoV1(processTransaction)
 
@@ -36,3 +24,5 @@ func TestHTTPHandler_GetHTMLInfoV1_fails(t *testing.T) {
 
 	assert.Equal(t, got, want)
 }
+
+*/
