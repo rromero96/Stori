@@ -1,28 +1,36 @@
 package system_test
 
-/*  func TestHTTPHandler_GetHTMLInfoV1_success(t *testing.T) {
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/rromero96/stori/cmd/api/system"
+)
+
+func TestHTTPHandler_GetHTMLInfoV1_success(t *testing.T) {
 	processTransaction := system.MockHTMLProcessTransactions([]byte{}, nil)
 	getHTMLInfoV1 := system.GetHTMLInfoV1(processTransaction)
 
-	ctx, w := context.Background(), httptest.NewRecorder()
-	r, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/test", strings.NewReader(""))
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
 
-	got := getHTMLInfoV1(w, r)
+	getHTMLInfoV1(c)
 
-	assert.Nil(t, got)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestHTTPHandler_GetHTMLInfoV1_fails(t *testing.T) {
 	processTransaction := system.MockHTMLProcessTransactions([]byte{}, system.ErrCantGetTransactionInfo)
 	getHTMLInfoV1 := system.GetHTMLInfoV1(processTransaction)
 
-	ctx, w := context.Background(), httptest.NewRecorder()
-	r, _ := http.NewRequestWithContext(ctx, http.MethodPost, "/test", strings.NewReader(""))
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
 
-	want := web.NewError(http.StatusInternalServerError, system.CantGetInfo)
-	got := getHTMLInfoV1(w, r)
+	getHTMLInfoV1(c)
 
-	assert.Equal(t, got, want)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
-
-*/

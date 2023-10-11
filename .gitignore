@@ -19,3 +19,13 @@
 
 # Go workspace file
 go.work
+
+# Mac OS
+.DS_Store
+
+# Common IDE folders
+.idea
+.vscode
+
+# Debug files
+.__debug_*
