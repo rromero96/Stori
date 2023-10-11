@@ -2,6 +2,7 @@
 This application was made by Rodrigo Romero using: 
 - Golang Gin Gonic Framework
 - Package oriented design architecture
+- Unit Tests
 - functional programming
 - Amazon RDS database
 - MySQL
