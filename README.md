@@ -20,7 +20,7 @@ The application is conected to the RDS DB so you don't have to configure MYSQL i
 The folder automatedtests has the collection in it if you want to try in on Postman.
 
 ## Code Interface
-- The application reads the csv file with the transactions information
+- The application reads the csv file with the transactions information. The csv file is located in system/data
 - Transforms this into a data type transactions and saves it into the database
-- Then it prepares the information to make the email
+- Then it prepares the information to make the email with the templated placed th system/html
 - Renders the information email styled to the client
